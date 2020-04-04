@@ -1,0 +1,2 @@
+options i2c_bcm2708 baudrate=1200000
+options i2c_bcm2835 baudrate=1200000

@@ -1,8 +1,8 @@
 
 CC=g++
 INCLUDEPATH=include
-CPPFLAGS=-I$(INCLUDEPATH) -Wall -std=c++17 -O2
-LINKFLAGS=#-lpthread
+CPPFLAGS=-I$(INCLUDEPATH) -Wall -O2
+LINKFLAGS=-lpigpio #-lpthread
 LIBPATH=fblib
 
 BUILDROOT=buildfs
@@ -26,14 +26,8 @@ cross-compile:
 
 compile: fbrun
 
-fbrun: fbrun.cpp mpu6050.o i2cdev.o
-	$(CC) $(CPPFLAGS) -o fbrun fbrun.cpp mpu6050.o i2cdev.o
-
-mpu6050.o: $(INCLUDEPATH)/mpu6050/helper_3dmath.h $(INCLUDEPATH)/mpu6050/MPU6050_6Axis_MotionApps20.h $(INCLUDEPATH)/mpu6050/MPU6050.h $(INCLUDEPATH)/mpu6050/MPU6050.cpp
-	$(CC) $(CPPFLAGS) -c -o mpu6050.o $(INCLUDEPATH)/mpu6050/MPU6050.cpp
-
-i2cdev.o: $(INCLUDEPATH)/mpu6050/I2Cdev.h $(INCLUDEPATH)/mpu6050/I2Cdev.cpp
-	$(CC) $(CPPFLAGS) -c -o i2cdev.o $(INCLUDEPATH)/mpu6050/I2Cdev.cpp
+fbrun: fbrun.cpp
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o fbrun fbrun.cpp
 
 purge:
 	rm -rf $(BUILDROOT)/$(BUILDPATH)/*
