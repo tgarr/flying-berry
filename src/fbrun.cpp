@@ -47,7 +47,6 @@
 #define MPU6050_ACCEL_Y2 0x3E
 #define MPU6050_ACCEL_Z1 0x3F
 #define MPU6050_ACCEL_Z2 0x40
-#define MPU6050_DEFAULT_ACCEL_Z 16384
 
 #define MPU6050_TEMP1 0x41
 #define MPU6050_TEMP2 0x42
@@ -59,52 +58,47 @@
 #define MPU6050_GYRO_Z1 0x47
 #define MPU6050_GYRO_Z2 0x48
 
+#define MPU6050_ACCEL_SENSITIVITY 16384
+#define MPU6050_GYRO_SENSITIVITY 131
+
+#define RAD_TO_DEGREE 57.29578f
+#define COMP_FILTER_COEFFICIENT 0.98f
+
+// indexation
 #define X 0
 #define Y 1
 #define Z 2
-#define DIM 3
-
 #define ROLL 0
 #define PITCH 1
 #define YAW 2
+#define DIM 3
 
-typedef short int IMUDataType;
-typedef IMUDataType XYZ[DIM];
+typedef short int SensorDataType;
+typedef SensorDataType SensorData[DIM];
+typedef float Angles[DIM];
 
-IMUDataType accx_offset = 0;
-IMUDataType accy_offset = 0;
-IMUDataType accz_offset = 0;
-IMUDataType gyrox_offset = 0;
-IMUDataType gyroy_offset = 0;
-IMUDataType gyroz_offset = 0;
+SensorDataType accx_offset = 0;
+SensorDataType accy_offset = 0;
+SensorDataType accz_offset = 0;
+SensorDataType gyrox_offset = 0;
+SensorDataType gyroy_offset = 0;
+SensorDataType gyroz_offset = 0;
 
-void read_sensors(int handle, XYZ acc, XYZ gyro){
+void read_sensors(int handle, SensorData acc, SensorData gyro){
     char values[14];
     i2cReadI2CBlockData(handle,MPU6050_ACCEL_X1,values,14);
-    acc[X] = (((IMUDataType)values[0] << 8) | (IMUDataType)values[1]) - accx_offset;
-    acc[Y] = (((IMUDataType)values[2] << 8) | (IMUDataType)values[3]) - accy_offset;
-    acc[Z] = ((IMUDataType)(values[4] << 8) | (IMUDataType)values[5]) - accz_offset;
-    gyro[X] = ((IMUDataType)(values[8] << 8) | (IMUDataType)values[9]) - gyrox_offset;
-    gyro[Y] = ((IMUDataType)(values[10] << 8) | (IMUDataType)values[11]) - gyroy_offset;
-    gyro[Z] = ((IMUDataType)(values[12] << 8) | (IMUDataType)values[13]) - gyroz_offset;
-}
-
-void read_gyroscope(int handle, XYZ values){
-    values[X] = (i2cReadByteData(handle,MPU6050_GYRO_X1) << 8 | i2cReadByteData(handle,MPU6050_GYRO_X2)) - gyrox_offset;
-    values[Y] = (i2cReadByteData(handle,MPU6050_GYRO_Y1) << 8 | i2cReadByteData(handle,MPU6050_GYRO_Y2)) - gyroy_offset;
-    values[Z] = (i2cReadByteData(handle,MPU6050_GYRO_Z1) << 8 | i2cReadByteData(handle,MPU6050_GYRO_Z2)) - gyroz_offset;
-}
-
-void read_accelerometer(int handle, XYZ values){
-    values[X] = (i2cReadByteData(handle,MPU6050_ACCEL_X1) << 8 | i2cReadByteData(handle,MPU6050_ACCEL_X2)) - accx_offset;
-    values[Y] = (i2cReadByteData(handle,MPU6050_ACCEL_Y1) << 8 | i2cReadByteData(handle,MPU6050_ACCEL_Y2)) - accy_offset;
-    values[Z] = (i2cReadByteData(handle,MPU6050_ACCEL_Z1) << 8 | i2cReadByteData(handle,MPU6050_ACCEL_Z2)) - accz_offset;
+    acc[X] = (((SensorDataType)values[0] << 8) | (SensorDataType)values[1]) - accx_offset;
+    acc[Y] = (((SensorDataType)values[2] << 8) | (SensorDataType)values[3]) - accy_offset;
+    acc[Z] = ((SensorDataType)(values[4] << 8) | (SensorDataType)values[5]) - accz_offset;
+    gyro[X] = ((SensorDataType)(values[8] << 8) | (SensorDataType)values[9]) - gyrox_offset;
+    gyro[Y] = ((SensorDataType)(values[10] << 8) | (SensorDataType)values[11]) - gyroy_offset;
+    gyro[Z] = ((SensorDataType)(values[12] << 8) | (SensorDataType)values[13]) - gyroz_offset;
 }
 
 float read_temp(int handle){
-    IMUDataType temp1 = i2cReadByteData(handle,MPU6050_TEMP1);
-    IMUDataType temp2 = i2cReadByteData(handle,MPU6050_TEMP2);
-    IMUDataType temp = (temp1 << 8) | temp2;
+    SensorDataType temp1 = i2cReadByteData(handle,MPU6050_TEMP1);
+    SensorDataType temp2 = i2cReadByteData(handle,MPU6050_TEMP2);
+    SensorDataType temp = (temp1 << 8) | temp2;
     return temp/340.0 + 36.53;
 }
 
@@ -141,7 +135,7 @@ void compute_offsets(int handle){
     int gyrox_sum,gyroy_sum,gyroz_sum; gyrox_sum = gyroy_sum = gyroz_sum = 0;
     int interval = 1.0 / DRONE_LOOP_RATE * 1000 * 1000;
     int n = IMU_CALIBRATION_TIME * 1000 * 1000 / interval;
-    XYZ accel,gyro;
+    SensorData accel,gyro;
     struct timeval st, et;
 
     for(int i=0;i<n;i++){
@@ -150,7 +144,7 @@ void compute_offsets(int handle){
 
         accx_sum += accel[X];
         accy_sum += accel[Y];
-        accz_sum += accel[Z] - MPU6050_DEFAULT_ACCEL_Z;
+        accz_sum += accel[Z] - MPU6050_ACCEL_SENSITIVITY;
 
         gyrox_sum += gyro[X];
         gyroy_sum += gyro[Y];
@@ -160,7 +154,6 @@ void compute_offsets(int handle){
         int elapsed = ((et.tv_sec - st.tv_sec) * 1000000) + (et.tv_usec - st.tv_usec);
         int remaining = interval - elapsed;
         if(remaining > 0) usleep(remaining);
-        //std::cout << elapsed << " " << remaining << std::endl;
     }
 
     accx_offset = accx_sum / (float)n;
@@ -170,103 +163,33 @@ void compute_offsets(int handle){
     gyrox_offset = gyrox_sum / (float)n;
     gyroy_offset = gyroy_sum / (float)n;
     gyroz_offset = gyroz_sum / (float)n;
-
-    std::cout << "offsets: " << accx_offset << " " << accy_offset << " " << accz_offset << " ";
-    std::cout << gyrox_offset << " " << gyroy_offset << " " << gyroz_offset << std::endl;
 }
 
+void complementary_filter(SensorData accel, SensorData gyro, Angles comp_angles, Angles gyro_angles, Angles accel_angles, float dt){
+    float ax = accel[X] / (float)MPU6050_ACCEL_SENSITIVITY;
+    float ay = accel[Y] / (float)MPU6050_ACCEL_SENSITIVITY;
+    float az = accel[Z] / (float)MPU6050_ACCEL_SENSITIVITY;
+    float gx = gyro[X] / (float)MPU6050_GYRO_SENSITIVITY;
+    float gy = gyro[Y] / (float)MPU6050_GYRO_SENSITIVITY;
+    float gz = gyro[Z] / (float)MPU6050_GYRO_SENSITIVITY;
 
-// Madgwick AHRS algorithm
-#define sampleFreq DRONE_LOOP_RATE 
-volatile float beta = 0.1f; // 2 * proportional gain (Kp)
-volatile float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f; // quaternion of sensor frame relative to auxiliary frame
+    gyro_angles[ROLL] += gx * dt;
+    gyro_angles[PITCH] += gy * dt;
+    gyro_angles[YAW] += gz * dt;
+    if(gyro_angles[ROLL] > 180) gyro_angles[ROLL] -= 360;
+    if(gyro_angles[ROLL] < -180) gyro_angles[ROLL] += 360;
+    if(gyro_angles[PITCH] > 180) gyro_angles[PITCH] -= 360;
+    if(gyro_angles[PITCH] < -180) gyro_angles[PITCH] += 360;
+    if(gyro_angles[YAW] > 180) gyro_angles[YAW] -= 360;
+    if(gyro_angles[YAW] < -180) gyro_angles[YAW] += 360;
 
-float invSqrt(float x) {
-    float halfx = 0.5f * x;
-    float y = x;
-    long i = *(long*)&y;
-    i = 0x5f3759df - (i>>1);
-    y = *(float*)&i;
-    y = y * (1.5f - (halfx * y * y));
-    return y;
-}
+    accel_angles[ROLL] = atan2(ay, az) * RAD_TO_DEGREE;
+    accel_angles[PITCH] = atan2(ax, az) * RAD_TO_DEGREE;
+    accel_angles[YAW] = gyro_angles[YAW];
 
-void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, float az) {
-	float recipNorm;
-	float s0, s1, s2, s3;
-	float qDot1, qDot2, qDot3, qDot4;
-	float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2 ,_8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
-
-	// Rate of change of quaternion from gyroscope
-	qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
-	qDot2 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
-	qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
-	qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
-
-	// Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-	if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
-
-		// Normalise accelerometer measurement
-		recipNorm = invSqrt(ax * ax + ay * ay + az * az);
-		ax *= recipNorm;
-		ay *= recipNorm;
-		az *= recipNorm;   
-
-		// Auxiliary variables to avoid repeated arithmetic
-		_2q0 = 2.0f * q0;
-		_2q1 = 2.0f * q1;
-		_2q2 = 2.0f * q2;
-		_2q3 = 2.0f * q3;
-		_4q0 = 4.0f * q0;
-		_4q1 = 4.0f * q1;
-		_4q2 = 4.0f * q2;
-		_8q1 = 8.0f * q1;
-		_8q2 = 8.0f * q2;
-		q0q0 = q0 * q0;
-		q1q1 = q1 * q1;
-		q2q2 = q2 * q2;
-		q3q3 = q3 * q3;
-
-		// Gradient decent algorithm corrective step
-		s0 = _4q0 * q2q2 + _2q2 * ax + _4q0 * q1q1 - _2q1 * ay;
-		s1 = _4q1 * q3q3 - _2q3 * ax + 4.0f * q0q0 * q1 - _2q0 * ay - _4q1 + _8q1 * q1q1 + _8q1 * q2q2 + _4q1 * az;
-		s2 = 4.0f * q0q0 * q2 + _2q0 * ax + _4q2 * q3q3 - _2q3 * ay - _4q2 + _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * az;
-		s3 = 4.0f * q1q1 * q3 - _2q1 * ax + 4.0f * q2q2 * q3 - _2q2 * ay;
-		recipNorm = invSqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3); // normalise step magnitude
-		s0 *= recipNorm;
-		s1 *= recipNorm;
-		s2 *= recipNorm;
-		s3 *= recipNorm;
-
-		// Apply feedback step
-		qDot1 -= beta * s0;
-		qDot2 -= beta * s1;
-		qDot3 -= beta * s2;
-		qDot4 -= beta * s3;
-	}
-
-	// Integrate rate of change of quaternion to yield quaternion
-	q0 += qDot1 * (1.0f / sampleFreq);
-	q1 += qDot2 * (1.0f / sampleFreq);
-	q2 += qDot3 * (1.0f / sampleFreq);
-	q3 += qDot4 * (1.0f / sampleFreq);
-
-	// Normalise quaternion
-	recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
-	q0 *= recipNorm;
-	q1 *= recipNorm;
-	q2 *= recipNorm;
-	q3 *= recipNorm;
-}
-
-void roll_pitch_yaw(float values[3]){
-    values[YAW] = atan2(2*q1*q2-2*q0*q3,2*q0*q0+2*q1*q1-1);
-    values[PITCH] = -1*asin(2*q1*q3+2*q0*q2);
-    values[ROLL] = atan2(2*q2*q3-2*q0*q1,2*q0*q0+2*q3*q3-1);
-
-    values[ROLL] *= (180/3.141592);
-    values[PITCH] *= (180/3.141592);
-    values[YAW] *= (180/3.141592);
+    comp_angles[ROLL] = (COMP_FILTER_COEFFICIENT*(comp_angles[ROLL]+gx*dt)) + ((1-COMP_FILTER_COEFFICIENT)*accel_angles[ROLL]);
+    comp_angles[PITCH] = (COMP_FILTER_COEFFICIENT*(comp_angles[PITCH]+gy*dt)) + ((1-COMP_FILTER_COEFFICIENT)*accel_angles[PITCH]);
+    comp_angles[YAW] = gyro_angles[YAW];
 }
 
 int main() {
@@ -277,27 +200,37 @@ int main() {
     compute_offsets(handle);
 
     int interval = 1.0 / DRONE_LOOP_RATE * 1000 * 1000;
-    XYZ accel,gyro;
-    float angles[3];
-    struct timeval st, et;
+    SensorData accel,gyro;
+    Angles comp_angles = {0,0,0};
+    Angles gyro_angles = {0,0,0};
+    Angles accel_angles = {0,0,0};
+    float dt;
+    struct timeval st,et;
 
+    int looptime = 0;
     int i = 0;
     while(1){
         gettimeofday(&st,NULL);
         read_sensors(handle,accel,gyro);
-        MadgwickAHRSupdateIMU(gyro[X],gyro[Y],gyro[Z],accel[X],accel[Y],accel[Z]);
+        dt = looptime / 1000000.0f;
+        complementary_filter(accel,gyro,comp_angles,gyro_angles,accel_angles,dt);
 
         i++;
         if((i*interval) % (500*1000) == 0){
-            //roll_pitch_yaw(angles);
-            //std::cout << angles[ROLL] << " " << angles[PITCH] << " " << angles[YAW] << std::endl;
-            std::cout << q0 << " " << q1 << " " << q2 << " " << q3 << std::endl;
+            std::cout << "COMP: " << comp_angles[ROLL] << " " << comp_angles[PITCH] << " " << comp_angles[YAW] << " | ";
+            std::cout << "GYRO: " << gyro_angles[ROLL] << " " << gyro_angles[PITCH] << " " << gyro_angles[YAW] << " | ";
+            std::cout << "ACCEL: " << accel_angles[ROLL] << " " << accel_angles[PITCH] << " " << accel_angles[YAW] << std::endl;
         }
-        
+       
+        // sleep until next update loop 
         gettimeofday(&et,NULL);
         int elapsed = ((et.tv_sec - st.tv_sec) * 1000000) + (et.tv_usec - st.tv_usec);
         int remaining = interval - elapsed;
         if(remaining > 0) usleep(remaining);
+
+        // compute looptime
+        gettimeofday(&et,NULL);
+        looptime = ((et.tv_sec - st.tv_sec) * 1000000) + (et.tv_usec - st.tv_usec);
     }
 
     // close connection to device
