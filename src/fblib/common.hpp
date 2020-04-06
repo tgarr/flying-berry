@@ -19,7 +19,7 @@
 #define KI 1
 #define KD 2
 
-typedef float Angles[DIM];
+typedef float Angle;
 
 #endif
 
