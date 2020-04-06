@@ -4,7 +4,7 @@ Put here the whole Raspbian file system for cross-compiling using qemu-user-stat
 
 ```sudo chroot buildfs apt-get install libpigpio-dev libpigpiod-if-dev libiniparser-dev```
 
-The Makefile will by default copy the files (rsync) to /home/pi/flyingberry-build and cross-compile them for arm. There is also a target for compiling and deploying it to a raspberry pi:
+The Makefile will by default copy the files (rsync) to buildfs/home/pi/flyingberry-build and cross-compile them for arm. There is also a target for compiling and deploying it to a raspberry pi:
 
 ```make deploy```
 
