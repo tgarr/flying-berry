@@ -16,9 +16,10 @@ public:
 
     // General
     int looprate,default_mode;
+    int stab_max_roll,stab_max_pitch;
 
     // Motor
-    int esc_fl_pin,esc_fr_pin,esc_bl_pin,esc_br_pin;
+    int esc_pin[MOTOR_TOTAL];
     int esc_min_value,esc_max_value;
 
     // IMU
@@ -29,7 +30,9 @@ public:
     float stab_roll_pid[3],stab_pitch_pid[3],rate_roll_pid[3],rate_pitch_pid[3],yaw_pid[3];
 
     // Control
-    int tcp_port;
+    
+    // FPV
+    int fpv_tcp_port,fpv_udp_port;
 };
 
 extern FBConfig fbconfig;
