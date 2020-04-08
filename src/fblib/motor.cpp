@@ -18,6 +18,9 @@ void Motor::setup(int p){
     pin = p;
     range = fbconfig.esc_max_value - fbconfig.esc_min_value;
     cur = 0;
+    set_pulse(0);
+    max_pulse = fbconfig.esc_min_value + (range * (fbconfig.max_throttle/100.0f));
+    max_pulse_increase = range * (fbconfig.max_throttle_increase/100.0f);
 }
 
 void Motor::on(){
@@ -44,6 +47,10 @@ void Motor::accelerate(float a){
 }
 
 void Motor::set_pulse(int p){
+    // prevent ESCs from smoking
+    if((p-cur) > max_pulse_increase) p = cur + max_pulse_increase;
+    if(p > max_pulse) p = max_pulse;
+
     gpioServo(pin,p);
     cur = p;
 }

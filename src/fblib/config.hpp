@@ -22,6 +22,7 @@ public:
     // Motor
     int esc_pin[MOTOR_TOTAL];
     int esc_min_value,esc_max_value;
+    int max_throttle,max_throttle_increase;
 
     // IMU
     int calibration_time,dlpf_level;

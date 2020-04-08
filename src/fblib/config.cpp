@@ -31,6 +31,8 @@ FBConfig::FBConfig(){
     esc_pin[BR] = iniparser_getint(ini,"Motor:esc_br_pin",-1);
     esc_min_value = iniparser_getint(ini,"Motor:esc_min_value",-1);
     esc_max_value = iniparser_getint(ini,"Motor:esc_max_value",-1);
+    max_throttle = iniparser_getint(ini,"Motor:max_throttle",-1);
+    max_throttle_increase = iniparser_getint(ini,"Motor:max_throttle_increase",-1);
 
     // IMU
     calibration_time = iniparser_getint(ini,"IMU:calibration_time",-1);

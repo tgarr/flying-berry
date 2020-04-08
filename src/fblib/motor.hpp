@@ -8,7 +8,7 @@
 enum class MotorPosition { front_left = FL, front_right = FR, back_left = BL, back_right = BR };
 
 class Motor {
-    int pin,range,cur;
+    int pin,range,cur,max_pulse,max_pulse_increase;
 
     void setup(int);
     void set_pulse(int);
