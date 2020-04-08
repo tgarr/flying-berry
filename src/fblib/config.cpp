@@ -16,6 +16,7 @@ FBConfig::FBConfig(){
     looprate = iniparser_getint(ini,"General:looprate",-1);
     stab_max_roll = iniparser_getint(ini,"General:stab_max_roll",-1);
     stab_max_pitch = iniparser_getint(ini,"General:stab_max_pitch",-1);
+    start_throttle = iniparser_getint(ini,"General:start_throttle",-1);
 
     std::string mode(iniparser_getstring(ini,"General:default_mode",NULL));
     if(mode.compare("rate") == 0)

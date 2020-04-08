@@ -6,7 +6,7 @@ int main() {
     Drone drone;
 
     if(!drone.setup()){
-        std::cerr << "[ERROR] Something went wrong! Try running as root." << std::endl;
+        std::cerr << "Something went wrong! Try running as root." << std::endl;
         return 0;
     }
 

@@ -17,6 +17,7 @@ public:
     // General
     int looprate,default_mode;
     int stab_max_roll,stab_max_pitch;
+    int start_throttle;
 
     // Motor
     int esc_pin[MOTOR_TOTAL];

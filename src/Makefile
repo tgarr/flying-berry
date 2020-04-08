@@ -9,14 +9,14 @@ BUILDROOT=buildfs
 BUILDPATH=/home/pi/flyingberry-build
 BUILDUSER=pi
 
-RPIADDR=192.168.100.6
+RPIADDR=192.168.100.9
 RPIUSER=pi
 RPIPATH=/home/pi/flyingberry
 
 all: syncfiles cross-compile
 	
 deploy: all # deploy to raspberry using scp
-	scp -r flyingberry.cfg $(BUILDROOT)/$(BUILDPATH)/fbrun $(RPIUSER)@$(RPIADDR):$(RPIPATH)
+	scp -r flyingberry.cfg $(BUILDROOT)/$(BUILDPATH)/flyingberry $(BUILDROOT)/$(BUILDPATH)/calibrate_esc $(BUILDROOT)/$(BUILDPATH)/test_motor $(RPIUSER)@$(RPIADDR):$(RPIPATH)
 
 syncfiles:
 	rsync -tr --delete Makefile flyingberry.cfg *.cpp include fblib $(BUILDROOT)/$(BUILDPATH)
@@ -24,10 +24,16 @@ syncfiles:
 cross-compile:
 	sudo chroot --userspec=$(BUILDUSER) $(BUILDROOT) make -C $(BUILDPATH) compile
 
-compile: fbrun
+compile: flyingberry calibrate_esc test_motor
 
-fbrun: fbrun.cpp drone.o config.o control.o imu.o motor.o pid.o
-	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o fbrun fbrun.cpp drone.o config.o control.o imu.o motor.o pid.o
+flyingberry: flyingberry.cpp drone.o config.o control.o imu.o motor.o pid.o
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o flyingberry flyingberry.cpp drone.o config.o control.o imu.o motor.o pid.o
+
+calibrate_esc: calibrate_esc.cpp motor.o config.o
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o calibrate_esc calibrate_esc.cpp config.o motor.o
+
+test_motor: test_motor.cpp motor.o config.o
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o test_motor test_motor.cpp config.o motor.o
 
 drone.o: $(LIBPATH)/drone.hpp $(LIBPATH)/drone.cpp $(LIBPATH)/config.hpp $(LIBPATH)/imu.hpp $(LIBPATH)/common.hpp $(LIBPATH)/control.hpp $(LIBPATH)/motor.hpp $(LIBPATH)/pid.hpp
 	$(CC) $(CPPFLAGS) -c -o drone.o $(LIBPATH)/drone.cpp
