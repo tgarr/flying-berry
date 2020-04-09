@@ -27,9 +27,9 @@ IMU::IMU(){
     i2cWriteByteData(handle,MPU6050_GYROCONFIG,MPU6050_GYROCONFIG_VALUE); // gyroscope range
     i2cWriteByteData(handle,MPU6050_ACCELCONFIG,MPU6050_ACCELCONFIG_VALUE); // accelerometer range
 
-    comp_angles = new Angle[DIM]{0,0,0};
-    gyro_angles = new Angle[DIM]{0,0,0};
-    accel_angles = new Angle[DIM]{0,0,0};
+    comp_angles = new Angle[3]{0,0,0};
+    gyro_angles = new Angle[3]{0,0,0};
+    accel_angles = new Angle[3]{0,0,0};
 
     ok = true;
 }
@@ -61,8 +61,8 @@ void IMU::read_sensors(){
 }
 
 void IMU::calibrate(){
-    int accel_sum[DIM] = {0,0,0};
-    int gyro_sum[DIM] = {0,0,0};
+    int accel_sum[3] = {0,0,0};
+    int gyro_sum[3] = {0,0,0};
     int interval = 1.0f / fbconfig.looprate * 1000 * 1000;
     int n = fbconfig.calibration_time * 1000 * 1000 / interval;
     struct timeval st, et;
@@ -88,7 +88,7 @@ void IMU::calibrate(){
     }
 
     // average all samples
-    for(int i=0;i<DIM;i++){
+    for(int i=0;i<3;i++){
         accel_offsets[i] = accel_sum[i] / (float)n;
         gyro_offsets[i] = gyro_sum[i] / (float)n;
     }

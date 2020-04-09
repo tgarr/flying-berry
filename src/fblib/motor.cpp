@@ -69,3 +69,7 @@ void all_motors_on(Motor& fl,Motor& fr,Motor& bl,Motor& br){
     sleep(fbconfig.delay_on);
 }
 
+void all_motors_on(Motor** m){
+    all_motors_on(*m[0],*m[1],*m[2],*m[3]);
+}
+

@@ -62,7 +62,7 @@
 #define RAD_TO_DEGREE 57.29578f
 
 typedef short int SensorDataType;
-typedef SensorDataType SensorData[DIM];
+typedef SensorDataType SensorData[3];
 
 class IMU {
     int handle;

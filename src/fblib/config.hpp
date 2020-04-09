@@ -10,21 +10,22 @@
 #define FLYINGBERRY_CONFIG "flyingberry.cfg"
 
 class FBConfig {
-    void parse_float_values(const char*,float*);
-    void parse_int_values(const char*,int*);
+    void parse_float_values(const char*,float*,int);
+    void parse_int_values(const char*,int*,int);
 
 public:
     FBConfig();
     ~FBConfig();
 
     // Flight
-    int looprate,default_mode;
+    int looprate;
+    FlightMode default_mode;
     int stab_max_roll,stab_max_pitch;
     int min_base_throttle;
     int max_base_throttle;
 
     // Motor
-    int esc_pin[MOTOR_TOTAL];
+    int esc_pin[4];
     int esc_min_value,esc_max_value;
     int max_throttle,max_throttle_increase;
     int delay_on;
@@ -35,7 +36,7 @@ public:
     int accel_multipliers[3],gyro_multipliers[3];
 
     // PID
-    float stab_roll_pid[3],stab_pitch_pid[3],rate_roll_pid[3],rate_pitch_pid[3],yaw_pid[3];
+    float pid[2][3][3];
     int integral_limit,pid_limit;
 
     // Control

@@ -5,10 +5,12 @@
 #include "config.hpp"
 
 class PID {
+    float kp,ki,kd;
     float previous_error,integral;
 
 public:
-    PID();
+    PID(float,float,float);
+    PID(float*);
     ~PID();
 
     float update(float,float,float);

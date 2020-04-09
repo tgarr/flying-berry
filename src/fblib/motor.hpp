@@ -5,8 +5,6 @@
 #include <pigpio.h>
 #include "config.hpp"
 
-enum class MotorPosition { front_left = FL, front_right = FR, back_left = BL, back_right = BR };
-
 class Motor {
     int pin,range,cur,max_pulse,max_pulse_increase;
 
@@ -26,6 +24,7 @@ public:
     float current();
 
     friend void all_motors_on(Motor&,Motor&,Motor&,Motor&);
+    friend void all_motors_on(Motor**);
 };
 
 #endif

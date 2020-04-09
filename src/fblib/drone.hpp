@@ -13,9 +13,13 @@
 #include "pid.hpp"
 
 class Drone {
-    IMU* imu;
-
-    int loop_interval;
+    IMU* imu; // sensors
+    Motor* motor[4]; // quadcopter
+    PID* pid[2][3]; // PID control for stabilize/rate modes vs roll/pitch/yaw
+    Control* control; // commands input
+    FlightMode mode; // current flight mode
+    int loop_interval; // duration of each update loop in microseconds
+    float setpoints[3] = {0,0,0}; // current setpoints 
 
 public:
     Drone();
@@ -24,6 +28,9 @@ public:
     bool setup();
     void run();
     void finalize();
+    void set_mode(FlightMode);
+    void set_setpoints(float,float,float);
+    float* get_setpoints();
 };
 
 #endif
