@@ -25,32 +25,33 @@ void Motor::setup(int p){
 
 void Motor::on(){
     set_pulse(fbconfig.esc_min_value);
-    sleep(5);
+    sleep(fbconfig.delay_on);
 }
 
 void Motor::off(){
     set_pulse(0);
 }
 
+// prevent ESCs from smoking
+int Motor::protection(int p){
+    if(p < fbconfig.esc_min_value) p = fbconfig.esc_min_value;
+    if(p > fbconfig.esc_max_value) p = fbconfig.esc_max_value;
+    if((p-cur) > max_pulse_increase) p = cur + max_pulse_increase;
+    if(p > max_pulse) p = max_pulse;
+    return p;
+}
+
 void Motor::throttle(float t){
     int thr = fbconfig.esc_min_value + t*range;
-    if(thr < fbconfig.esc_min_value) thr = fbconfig.esc_min_value;
-    if(thr > fbconfig.esc_max_value) thr = fbconfig.esc_max_value;
-    set_pulse(thr);
+    set_pulse(protection(thr));
 }
 
 void Motor::accelerate(float a){ 
     int thr = cur + (range * a);
-    if(thr < fbconfig.esc_min_value) thr = fbconfig.esc_min_value;
-    if(thr > fbconfig.esc_max_value) thr = fbconfig.esc_max_value;
-    set_pulse(thr);
+    set_pulse(protection(thr));
 }
 
 void Motor::set_pulse(int p){
-    // prevent ESCs from smoking
-    if((p-cur) > max_pulse_increase) p = cur + max_pulse_increase;
-    if(p > max_pulse) p = max_pulse;
-
     gpioServo(pin,p);
     cur = p;
 }
@@ -65,6 +66,6 @@ void all_motors_on(Motor& fl,Motor& fr,Motor& bl,Motor& br){
     fr.set_pulse(fbconfig.esc_min_value);
     bl.set_pulse(fbconfig.esc_min_value);
     br.set_pulse(fbconfig.esc_min_value);
-    sleep(5);
+    sleep(fbconfig.delay_on);
 }
 

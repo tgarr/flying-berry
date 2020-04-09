@@ -12,6 +12,7 @@ class Motor {
 
     void setup(int);
     void set_pulse(int);
+    int protection(int);
 
 public:
     Motor(int);

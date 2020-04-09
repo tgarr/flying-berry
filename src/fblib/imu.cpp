@@ -74,7 +74,7 @@ void IMU::calibrate(){
 
         accel_sum[X] += accel_data[X];
         accel_sum[Y] += accel_data[Y];
-        accel_sum[Z] += accel_data[Z] - MPU6050_ACCEL_SENSITIVITY;
+        accel_sum[Z] += accel_data[Z] - (fbconfig.accel_multipliers[Z] * MPU6050_ACCEL_SENSITIVITY);
 
         gyro_sum[X] += gyro_data[X];
         gyro_sum[Y] += gyro_data[Y];
@@ -95,20 +95,16 @@ void IMU::calibrate(){
 }
 
 void IMU::complementary_filter(float dt){
-    float ax = accel_data[X] / (float)MPU6050_ACCEL_SENSITIVITY;
-    float ay = accel_data[Y] / (float)MPU6050_ACCEL_SENSITIVITY;
-    float az = accel_data[Z] / (float)MPU6050_ACCEL_SENSITIVITY;
-    float gx = gyro_data[X] / (float)MPU6050_GYRO_SENSITIVITY;
-    float gy = gyro_data[Y] / (float)MPU6050_GYRO_SENSITIVITY;
-    float gz = gyro_data[Z] / (float)MPU6050_GYRO_SENSITIVITY;
+    float ax = fbconfig.accel_multipliers[X] * accel_data[X] / (float)MPU6050_ACCEL_SENSITIVITY;
+    float ay = fbconfig.accel_multipliers[Y] * accel_data[Y] / (float)MPU6050_ACCEL_SENSITIVITY;
+    float az = fbconfig.accel_multipliers[Z] * accel_data[Z] / (float)MPU6050_ACCEL_SENSITIVITY;
+    float gx = fbconfig.gyro_multipliers[X] * gyro_data[X] / (float)MPU6050_GYRO_SENSITIVITY;
+    float gy = fbconfig.gyro_multipliers[Y] * gyro_data[Y] / (float)MPU6050_GYRO_SENSITIVITY;
+    float gz = fbconfig.gyro_multipliers[Z] * gyro_data[Z] / (float)MPU6050_GYRO_SENSITIVITY;
 
     gyro_angles[ROLL] += gx * dt;
     gyro_angles[PITCH] += gy * dt;
     gyro_angles[YAW] += gz * dt;
-    if(gyro_angles[ROLL] > 180) gyro_angles[ROLL] -= 360;
-    if(gyro_angles[ROLL] < -180) gyro_angles[ROLL] += 360;
-    if(gyro_angles[PITCH] > 180) gyro_angles[PITCH] -= 360;
-    if(gyro_angles[PITCH] < -180) gyro_angles[PITCH] += 360;
     if(gyro_angles[YAW] > 180) gyro_angles[YAW] -= 360;
     if(gyro_angles[YAW] < -180) gyro_angles[YAW] += 360;
 
@@ -128,6 +124,14 @@ void IMU::update(float dt){
 
 Angle* IMU::attitude(){
     return comp_angles;
+}
+
+Angle* IMU::gyro(){
+    return gyro_angles;
+}
+
+Angle* IMU::accel(){
+    return accel_angles;
 }
 
 

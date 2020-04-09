@@ -3,7 +3,12 @@
 
 FBConfig fbconfig;
 
-void parse_float_values(const char *str,float* values){
+void FBConfig::parse_float_values(const char *str,float* values){
+    std::istringstream iss(str);
+    iss >> values[0] >> values[1] >> values[2];
+}
+
+void FBConfig::parse_int_values(const char *str,int* values){
     std::istringstream iss(str);
     iss >> values[0] >> values[1] >> values[2];
 }
@@ -33,11 +38,14 @@ FBConfig::FBConfig(){
     esc_max_value = iniparser_getint(ini,"Motor:esc_max_value",-1);
     max_throttle = iniparser_getint(ini,"Motor:max_throttle",-1);
     max_throttle_increase = iniparser_getint(ini,"Motor:max_throttle_increase",-1);
+    delay_on = iniparser_getint(ini,"Motor:delay_on",-1);
 
     // IMU
     calibration_time = iniparser_getint(ini,"IMU:calibration_time",-1);
     dlpf_level = iniparser_getint(ini,"IMU:dlpf_level",-1);
     comp_filter_coefficient = iniparser_getdouble(ini,"IMU:comp_filter_coefficient",-1);
+    parse_int_values(iniparser_getstring(ini,"IMU:accel_multipliers",NULL),accel_multipliers);
+    parse_int_values(iniparser_getstring(ini,"IMU:gyro_multipliers",NULL),gyro_multipliers);
 
     // PID
     parse_float_values(iniparser_getstring(ini,"PID:stab_roll_pid",NULL),stab_roll_pid);

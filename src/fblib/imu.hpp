@@ -89,6 +89,8 @@ public:
     void calibrate();
     void update(float);
     Angle* attitude();
+    Angle* gyro();
+    Angle* accel();
 };
 
 #endif
