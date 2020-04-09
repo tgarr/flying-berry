@@ -17,13 +17,14 @@ FBConfig::FBConfig(){
     dictionary* ini;
     ini = iniparser_load(FLYINGBERRY_CONFIG);
 
-    // General
-    looprate = iniparser_getint(ini,"General:looprate",-1);
-    stab_max_roll = iniparser_getint(ini,"General:stab_max_roll",-1);
-    stab_max_pitch = iniparser_getint(ini,"General:stab_max_pitch",-1);
-    start_throttle = iniparser_getint(ini,"General:start_throttle",-1);
+    // Flight
+    looprate = iniparser_getint(ini,"Flight:looprate",-1);
+    stab_max_roll = iniparser_getint(ini,"Flight:stab_max_roll",-1);
+    stab_max_pitch = iniparser_getint(ini,"Flight:stab_max_pitch",-1);
+    min_base_throttle = iniparser_getint(ini,"Flight:start_throttle",-1);
+    max_base_throttle = iniparser_getint(ini,"Flight:max_base_throttle",-1);
 
-    std::string mode(iniparser_getstring(ini,"General:default_mode",NULL));
+    std::string mode(iniparser_getstring(ini,"Flight:default_mode",NULL));
     if(mode.compare("rate") == 0)
         default_mode = FB_FLIGHT_RATE;
     else
@@ -57,7 +58,6 @@ FBConfig::FBConfig(){
     pid_limit = iniparser_getint(ini,"PID:pid_limit",-1);
 
     // Control
-    max_base_throttle = iniparser_getint(ini,"Control:max_base_throttle",-1);
     
     // FPV
     fpv_tcp_port = iniparser_getint(ini,"FPV:tcp_port",-1);

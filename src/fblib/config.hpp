@@ -17,10 +17,11 @@ public:
     FBConfig();
     ~FBConfig();
 
-    // General
+    // Flight
     int looprate,default_mode;
     int stab_max_roll,stab_max_pitch;
-    int start_throttle;
+    int min_base_throttle;
+    int max_base_throttle;
 
     // Motor
     int esc_pin[MOTOR_TOTAL];
@@ -38,7 +39,6 @@ public:
     int integral_limit,pid_limit;
 
     // Control
-    int max_base_throttle;
     
     // FPV
     int fpv_tcp_port,fpv_udp_port;
