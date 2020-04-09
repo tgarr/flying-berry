@@ -17,6 +17,12 @@ bool Drone::setup(){
     motor[static_cast<int>(MotorPosition::front_right)] = new Motor(MotorPosition::front_right);
     motor[static_cast<int>(MotorPosition::back_left)] = new Motor(MotorPosition::back_left);
     motor[static_cast<int>(MotorPosition::back_right)] = new Motor(MotorPosition::back_right);
+
+    // avoid sleeping too much
+    fbconfig.delay_on = fbconfig.delay_on - fbconfig.calibration_time;
+    if(fbconfig.delay_on < 0) fbconfig.delay_on = 0;
+
+    // arm the motors
     all_motors_on(motor);
 
     // initialise IMU
