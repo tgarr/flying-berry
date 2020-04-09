@@ -30,8 +30,10 @@ public:
 
     // PID
     float stab_roll_pid[3],stab_pitch_pid[3],rate_roll_pid[3],rate_pitch_pid[3],yaw_pid[3];
+    int integral_limit,pid_limit;
 
     // Control
+    int max_base_throttle;
     
     // FPV
     int fpv_tcp_port,fpv_udp_port;

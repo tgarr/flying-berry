@@ -45,8 +45,11 @@ FBConfig::FBConfig(){
     parse_float_values(iniparser_getstring(ini,"PID:rate_roll_pid",NULL),rate_roll_pid);
     parse_float_values(iniparser_getstring(ini,"PID:rate_pitch_pid",NULL),rate_pitch_pid);
     parse_float_values(iniparser_getstring(ini,"PID:yaw_pid",NULL),yaw_pid);
+    integral_limit = iniparser_getint(ini,"PID:integral_limit",-1);
+    pid_limit = iniparser_getint(ini,"PID:pid_limit",-1);
 
     // Control
+    max_base_throttle = iniparser_getint(ini,"Control:max_base_throttle",-1);
     
     // FPV
     fpv_tcp_port = iniparser_getint(ini,"FPV:tcp_port",-1);
