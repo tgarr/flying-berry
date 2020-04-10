@@ -21,13 +21,13 @@ public:
     int looprate;
     FlightMode default_mode;
     int stab_max_roll,stab_max_pitch;
-    int min_base_throttle;
-    int max_base_throttle;
+    float min_base_throttle;
+    float max_base_throttle;
 
     // Motor
     int esc_pin[4];
     int esc_min_value,esc_max_value;
-    int max_throttle,max_throttle_increase;
+    float max_throttle,max_throttle_increase;
     int delay_on;
 
     // IMU

@@ -36,47 +36,75 @@ bool Drone::setup(){
             pid[i][j] = new PID(fbconfig.pid[i][j]);
 
     // control
-    control = new Control(); // TODO parameters
+    control = new Control(this);
 
     return true;
 }
 
 void Drone::run(){
-    float dt;
-    struct timeval st,et; // TODO use pointers: switch st/et at the start of loop
-
+    float dt,pidv[3] = {0,0,0}; 
+    struct timeval *st = new struct timeval;
+    struct timeval *et = new struct timeval;
+    struct timeval *temp;
     int looptime = 0;
-    int i = 0;    
-    while(1){ // TODO end condition
 
+    flying = true; // TODO only after take-off
+    gettimeofday(et,NULL); 
+    while(!end){
         // delta time
-        gettimeofday(&st,NULL); // TODO use pointer: st = et; et = st;
+        temp = st; st = et; et = temp;
         dt = looptime / 1000000.0f;
 
         // update attitude
         imu->update(dt);
+        Angle* angles = imu->attitude();
 
-        // XXX print attidude
-        i++;
-        if((i*loop_interval) % (500*1000) == 0){
-            Angle* angles = imu->attitude();
-            std::cout << angles[ROLL] << " " << angles[PITCH] << " " << angles[YAW] << std::endl;
-        }
+        // update PID
+        for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) * PID_SCALE;
 
-        // TODO update PID
-        // TODO update motors
-        // TODO execute command (change setpoints)
+        // actuate on motors
+        update_motors(pidv);
+
+        // check commands
+        control->update(dt);
 
         // sleep until next update loop 
-        gettimeofday(&et,NULL);
-        int elapsed = ((et.tv_sec-st.tv_sec)*1000000)+(et.tv_usec-st.tv_usec);
-        int remaining = loop_interval-elapsed;
+        gettimeofday(et,NULL);
+        int elapsed = ((et->tv_sec - st->tv_sec)*1000000) + (et->tv_usec - st->tv_usec);
+        int remaining = loop_interval - elapsed;
         if(remaining > 0) usleep(remaining);
 
         // compute looptime
-        gettimeofday(&et,NULL);
-        looptime = ((et.tv_sec-st.tv_sec)*1000000)+(et.tv_usec-st.tv_usec);
+        gettimeofday(et,NULL);
+        looptime = ((et->tv_sec - st->tv_sec)*1000000) + (et->tv_usec - st->tv_usec);
     }
+
+    delete st;
+    delete et;
+}
+
+// update motors throttle, ensuring they do not stop spinning while flying
+void Drone::update_motors(float *pidv){
+    // front left
+    float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] + pidv[YAW];
+    if(flying && (fl < fbconfig.min_base_throttle)) fl = fbconfig.min_base_throttle;
+
+    // front right
+    float fr = setpoints[THROTTLE] - pidv[ROLL] + pidv[PITCH] - pidv[YAW];
+    if(flying && (fr < fbconfig.min_base_throttle)) fr = fbconfig.min_base_throttle;
+
+    // back left
+    float bl = setpoints[THROTTLE] + pidv[ROLL] - pidv[PITCH] - pidv[YAW];
+    if(flying && (bl < fbconfig.min_base_throttle)) bl = fbconfig.min_base_throttle;
+
+    // back right
+    float br = setpoints[THROTTLE] - pidv[ROLL] - pidv[PITCH] + pidv[YAW];
+    if(flying && (br < fbconfig.min_base_throttle)) br = fbconfig.min_base_throttle;
+
+    motor[static_cast<int>(MotorPosition::front_left)]->throttle(fl);
+    motor[static_cast<int>(MotorPosition::back_right)]->throttle(br);
+    motor[static_cast<int>(MotorPosition::front_right)]->throttle(fr);
+    motor[static_cast<int>(MotorPosition::back_left)]->throttle(bl);
 }
 
 void Drone::finalize(){
@@ -100,13 +128,36 @@ void Drone::set_mode(FlightMode m){
     }
 }
 
-void Drone::set_setpoints(float r,float p,float y){
-    setpoints[ROLL] = r;
-    setpoints[PITCH] = p;
-    setpoints[YAW] = y;
+void Drone::set_setpoints(float r,float p,float y,float t){
+    if(flying && (t < fbconfig.min_base_throttle)) t = fbconfig.min_base_throttle;
+    if(t > fbconfig.max_base_throttle) t = fbconfig.max_base_throttle;
+    
+    setpoints[YAW] += y; // always in rate mode
+    setpoints[THROTTLE] = t; // base throttle
+
+    if(mode == FlightMode::stabilize){
+        if(r < -fbconfig.stab_max_roll) r = -fbconfig.stab_max_roll;
+        if(r > fbconfig.stab_max_roll) r = fbconfig.stab_max_roll;
+        if(p < -fbconfig.stab_max_pitch) p = -fbconfig.stab_max_pitch;
+        if(p > fbconfig.stab_max_pitch) p = fbconfig.stab_max_pitch;
+
+        setpoints[ROLL] = r;
+        setpoints[PITCH] = p;
+    }
+    else {
+        setpoints[ROLL] += r;
+        setpoints[PITCH] += p;
+    }
 }
 
 float* Drone::get_setpoints(){
     return setpoints;
+}
+
+void Drone::stop(){
+    flying = false;
+    end = true;
+
+    for(int i=0;i<4;i++) motor[i]->off();
 }
 

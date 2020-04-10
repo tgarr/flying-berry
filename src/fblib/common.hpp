@@ -5,12 +5,13 @@
 #include <iostream> // XXX remove
 
 // indexation
-#define X 0 // x axis
-#define Y 1 // y axis
-#define Z 2 // z axis
-#define ROLL 0 // roll angle
-#define PITCH 1 // pitch angle
-#define YAW 2 // yaw angle
+#define X 0 
+#define Y 1 
+#define Z 2 
+#define ROLL 0
+#define PITCH 1 
+#define YAW 2
+#define THROTTLE 3
 
 enum class MotorPosition { front_left = 0, front_right = 1, back_left = 2, back_right = 3 };
 enum class FlightMode { stabilize = 0, rate = 1 };

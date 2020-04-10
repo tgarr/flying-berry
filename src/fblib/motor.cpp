@@ -18,8 +18,8 @@ void Motor::setup(int p){
     pin = p;
     range = fbconfig.esc_max_value - fbconfig.esc_min_value;
     cur = 0;
-    max_pulse = fbconfig.esc_min_value + (range * (fbconfig.max_throttle/100.0f));
-    max_pulse_increase = range * (fbconfig.max_throttle_increase/100.0f);
+    max_pulse = fbconfig.esc_min_value + (range * fbconfig.max_throttle);
+    max_pulse_increase = range * fbconfig.max_throttle_increase;
     set_pulse(0);
 }
 
