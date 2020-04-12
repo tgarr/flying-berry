@@ -175,7 +175,7 @@ SteamControllerDeviceEnum *SteamController_EnumControllerDevices() {
         close(fdReportDescriptor);
 
         if (memcmp(bufMagic, ReportDescriptorMagic, 3)) {
-          fprintf(stderr, "Device %d: report descriptor mismatch...\n", deviceId);
+          //fprintf(stderr, "Device %d: report descriptor mismatch...\n", deviceId);
           continue;
         }
 

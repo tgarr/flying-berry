@@ -39,7 +39,12 @@ public:
     float pid[2][3][3];
     int integral_limit,pid_limit;
 
-    // Control
+    // Controller
+    ControllerMode default_controller;
+    int disconnected_time_limit;
+
+    // Steam Controller
+    float roll_sensitivity,pitch_sensitivity,yaw_sensitivity,throttle_sensitivity;
     
     // FPV
     int fpv_tcp_port,fpv_udp_port;

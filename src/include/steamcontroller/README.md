@@ -1,6 +1,6 @@
 This is a copy of https://github.com/kolrabi/steamcontroller, a C library for accessing the Steam Controller without the Steam SDK or Steam, developed by Björn Paetzel. 
 
-I removed the C# files, and compile the library using my own Makefile.
+I removed the C# files, and commented some lines that were printing warnings. Furthermore, I compile the library using my own Makefile.
 
 # Steam Controller Library
 

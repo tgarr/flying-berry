@@ -73,7 +73,7 @@ bool SteamController_Initialize(const SteamControllerDevice *pDevice) {
   } 
 
   if (featureReport.dataLen < 4) {
-    fprintf(stderr, "Bad GET_ATTRIBUTES response for controller %p\n", pDevice);
+    //fprintf(stderr, "Bad GET_ATTRIBUTES response for controller %p\n", pDevice);
     // Don't fail, the controller still works without.
     // return false;
   }

@@ -25,13 +25,15 @@ int main(int argc,char **argv) {
     std::cout << "Disconnect the battery from the ESC and press enter";
     std::cin.ignore();
 
-    motor.throttle(1.0); // max throttle
+    motor.start_calibration();
+    motor.calibration_max(); // max throttle
     std::cout << "Connect the battery and press enter";
     std::cin.ignore();
 
     sleep(2);
-    motor.throttle(0.0); // min throttle
+    motor.calibration_min(); // min throttle
     sleep(2);
+    motor.stop_calibration();
 
     gpioTerminate();
 

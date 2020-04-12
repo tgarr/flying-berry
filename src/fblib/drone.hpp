@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include "common.hpp"
 #include "config.hpp"
-#include "control.hpp"
+#include "controller.hpp"
 #include "imu.hpp"
 #include "motor.hpp"
 #include "pid.hpp"
@@ -15,13 +15,13 @@
 #define PID_SCALE 0.01
 
 // cross-reference
-class Control;
+class Controller;
 
 class Drone {
     IMU* imu; // sensors
     Motor* motor[4]; // quadcopter
     PID* pid[2][3]; // PID control for stabilize/rate modes vs roll/pitch/yaw
-    Control* control; // commands input
+    Controller* controller; // commands input
     FlightMode mode; // current flight mode
     int loop_interval; // duration of each update loop in microseconds
     float setpoints[4] = {0,0,0,0}; // current setpoints 
@@ -30,16 +30,35 @@ class Drone {
 
     void update_motors(float*);
 public:
-    Drone();
+    Drone(Controller*);
     ~Drone();
 
     bool setup();
     void run();
     void finalize();
-    void set_mode(FlightMode);
-    void set_setpoints(float,float,float,float);
-    float* get_setpoints();
     void stop();
+
+    void panic();
+    void set_mode(FlightMode);
+
+    bool is_flying(){ return flying; }
+    void set_flying(bool f){ flying = f; }
+    void takeoff();
+    
+    float* get_setpoints(){ return setpoints; }
+    void set_setpoints(float,float,float,float);
+
+    float roll(){ return setpoints[ROLL]; }
+    void roll(float);
+    
+    float pitch(){ return setpoints[PITCH]; }
+    void pitch(float);
+    
+    float yaw(){ return setpoints[YAW]; }
+    void yaw(float);
+    
+    float throttle(){ return setpoints[THROTTLE]; }
+    void throttle(float);
 };
 
 #endif

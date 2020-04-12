@@ -7,6 +7,7 @@
 
 class Motor {
     int pin,range,cur,max_pulse,max_pulse_increase;
+    bool calibrating = false;
 
     void setup(int);
     void set_pulse(int);
@@ -22,6 +23,10 @@ public:
     void throttle(float);
     void accelerate(float);
     float current();
+    void start_calibration();
+    void stop_calibration();
+    void calibration_min();
+    void calibration_max();
 
     friend void all_motors_on(Motor&,Motor&,Motor&,Motor&);
     friend void all_motors_on(Motor**);

@@ -26,8 +26,8 @@ cross-compile:
 
 compile: flyingberry calibrate_esc test_motor
 
-flyingberry: flyingberry.cpp drone.o config.o control.o imu.o motor.o pid.o
-	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o flyingberry flyingberry.cpp drone.o config.o control.o imu.o motor.o pid.o
+flyingberry: flyingberry.cpp drone.o config.o steam.o imu.o motor.o pid.o steamcontroller.a
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o flyingberry flyingberry.cpp drone.o config.o steam.o imu.o motor.o pid.o steamcontroller.a
 
 calibrate_esc: calibrate_esc.cpp motor.o config.o
 	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o calibrate_esc calibrate_esc.cpp config.o motor.o
@@ -35,14 +35,14 @@ calibrate_esc: calibrate_esc.cpp motor.o config.o
 test_motor: test_motor.cpp motor.o config.o
 	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o test_motor test_motor.cpp config.o motor.o
 
-drone.o: $(LIBPATH)/drone.hpp $(LIBPATH)/drone.cpp $(LIBPATH)/config.hpp $(LIBPATH)/imu.hpp $(LIBPATH)/common.hpp $(LIBPATH)/control.hpp $(LIBPATH)/motor.hpp $(LIBPATH)/pid.hpp
+drone.o: $(LIBPATH)/drone.hpp $(LIBPATH)/drone.cpp $(LIBPATH)/config.hpp $(LIBPATH)/imu.hpp $(LIBPATH)/common.hpp $(LIBPATH)/controller.hpp $(LIBPATH)/motor.hpp $(LIBPATH)/pid.hpp
 	$(CC) $(CPPFLAGS) -c -o drone.o $(LIBPATH)/drone.cpp
 
 config.o: $(LIBPATH)/config.hpp $(LIBPATH)/config.cpp $(LIBPATH)/common.hpp
 	$(CC) $(CPPFLAGS) -c -o config.o $(LIBPATH)/config.cpp
 
-control.o: $(LIBPATH)/control.hpp $(LIBPATH)/control.cpp $(LIBPATH)/common.hpp
-	$(CC) $(CPPFLAGS) -c -o control.o $(LIBPATH)/control.cpp
+steam.o: $(LIBPATH)/steam.hpp $(LIBPATH)/steam.cpp $(LIBPATH)/common.hpp $(LIBPATH)/controller.hpp
+	$(CC) $(CPPFLAGS) -c -o steam.o $(LIBPATH)/steam.cpp
 
 imu.o: $(LIBPATH)/imu.hpp $(LIBPATH)/imu.cpp $(LIBPATH)/common.hpp
 	$(CC) $(CPPFLAGS) -c -o imu.o $(LIBPATH)/imu.cpp
@@ -52,6 +52,10 @@ motor.o: $(LIBPATH)/motor.hpp $(LIBPATH)/motor.cpp $(LIBPATH)/common.hpp
 
 pid.o: $(LIBPATH)/pid.hpp $(LIBPATH)/pid.cpp $(LIBPATH)/common.hpp
 	$(CC) $(CPPFLAGS) -c -o pid.o $(LIBPATH)/pid.cpp
+
+steamcontroller.a:
+	$(CC) $(CPPFLAGS) -c -fpermissive $(INCLUDEPATH)/steamcontroller/steamcontroller*.c
+	ar rcs steamcontroller.a steamcontroller*.o
 
 purge:
 	rm -rf $(BUILDROOT)/$(BUILDPATH)/*

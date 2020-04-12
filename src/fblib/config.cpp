@@ -21,7 +21,7 @@ FBConfig::FBConfig(){
     looprate = iniparser_getint(ini,"Flight:looprate",-1);
     stab_max_roll = iniparser_getint(ini,"Flight:stab_max_roll",-1);
     stab_max_pitch = iniparser_getint(ini,"Flight:stab_max_pitch",-1);
-    min_base_throttle = iniparser_getint(ini,"Flight:start_throttle",-1) / 100.0f;
+    min_base_throttle = iniparser_getint(ini,"Flight:min_base_throttle",-1) / 100.0f;
     max_base_throttle = iniparser_getint(ini,"Flight:max_base_throttle",-1) / 100.0f;
 
     std::string mode(iniparser_getstring(ini,"Flight:default_mode",NULL));
@@ -55,7 +55,19 @@ FBConfig::FBConfig(){
     integral_limit = iniparser_getint(ini,"PID:integral_limit",-1);
     pid_limit = iniparser_getint(ini,"PID:pid_limit",-1);
 
-    // Control
+    // Controller
+    disconnected_time_limit = iniparser_getint(ini,"Controller:disconnected_time_limit",-1);
+    mode = iniparser_getstring(ini,"Controller:default",NULL);
+    if(mode.compare("network") == 0)
+        default_controller = ControllerMode::network;
+    else
+        default_controller = ControllerMode::steam;
+
+    // Steam Controller
+    roll_sensitivity = iniparser_getint(ini,"Steam_Controller:roll_sensitivity",-1) / 100.0f;
+    pitch_sensitivity = iniparser_getint(ini,"Steam_Controller:pitch_sensitivity",-1) / 100.0f;
+    yaw_sensitivity = iniparser_getint(ini,"Steam_Controller:yaw_sensitivity",-1) / 100.0f;
+    throttle_sensitivity = iniparser_getint(ini,"Steam_Controller:throttle_sensitivity",-1) / 100.0f;
     
     // FPV
     fpv_tcp_port = iniparser_getint(ini,"FPV:tcp_port",-1);

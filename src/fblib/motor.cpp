@@ -60,6 +60,23 @@ float Motor::current(){
     return (cur-fbconfig.esc_min_value) / (float)range;
 }
 
+void Motor::start_calibration(){
+    calibrating = true;
+}
+
+void Motor::calibration_max(){
+    if(calibrating) set_pulse(fbconfig.esc_max_value);
+}
+
+void Motor::calibration_min(){
+    if(calibrating) set_pulse(fbconfig.esc_min_value);
+}
+
+void Motor::stop_calibration(){
+    calibrating = false;
+    set_pulse(0);
+}
+
 // arm all ESCs and sleep only once
 void all_motors_on(Motor& fl,Motor& fr,Motor& bl,Motor& br){
     fl.set_pulse(fbconfig.esc_min_value);
