@@ -1,0 +1,11 @@
+[Unit]
+Description=Flying Berry flight controller
+After=sshd.service
+
+[Service]
+ExecStart=nice -n -10 /home/pi/flyingberry/flyingberry
+User=root
+WorkingDirectory=/home/pi/flyingberry
+
+[Install]
+WantedBy=basic.target
