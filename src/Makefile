@@ -53,7 +53,7 @@ motor.o: $(LIBPATH)/motor.hpp $(LIBPATH)/motor.cpp $(LIBPATH)/common.hpp
 pid.o: $(LIBPATH)/pid.hpp $(LIBPATH)/pid.cpp $(LIBPATH)/common.hpp
 	$(CC) $(CPPFLAGS) -c -o pid.o $(LIBPATH)/pid.cpp
 
-steamcontroller.a:
+steamcontroller.a: $(INCLUDEPATH)/steamcontroller/steamcontroller.h $(INCLUDEPATH)/steamcontroller/steamcontroller*.c
 	$(CC) $(CPPFLAGS) -c -fpermissive $(INCLUDEPATH)/steamcontroller/steamcontroller*.c
 	ar rcs steamcontroller.a steamcontroller*.o
 

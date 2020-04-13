@@ -65,12 +65,29 @@ void SteamControllerHandler::input_event(float dt){
         if(event.update.buttons & STEAMCONTROLLER_BUTTON_PREV){
             drone->stop(); // TODO land
         }
-
-        // TODO other buttons
     }
 
-    // TODO sticks
+    // stabilize mode
+    // TODO rate mode
+    float roll,pitch;
+    if((event.update.rightXY.x == 0) || (event.update.rightXY.y == 0)){
+        roll = event.update.rightXY.x / (float)STEAMCONTROLLER_RIGHTPAD_RADIUS * 100 * fbconfig.roll_sensitivity;
+        pitch = -1*event.update.rightXY.y / (float)STEAMCONTROLLER_RIGHTPAD_RADIUS * 100 * fbconfig.pitch_sensitivity;
+    }
+    else {
+        float x = event.update.rightXY.x;
+        float y = event.update.rightXY.y;
+        float d = atan(abs(y)/abs(x));
+        float c = sqrt(x*x + y*y);
+        float crate = c / STEAMCONTROLLER_RIGHTPAD_RADIUS;
 
+        roll = copysign(crate * ((M_PI/2-d)/(M_PI/2)),x) * 100 * fbconfig.roll_sensitivity;
+        pitch = -1 * copysign(crate * (d/(M_PI/2)),y) * 100 * fbconfig.pitch_sensitivity;
+    }
+
+    drone->roll(roll);
+    drone->pitch(pitch);
+    // TODO yaw
 }
 
 void SteamControllerHandler::connection_event(float dt){

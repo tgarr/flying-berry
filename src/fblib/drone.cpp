@@ -69,6 +69,7 @@ void Drone::run(){
 
         // check commands
         controller->update(dt);
+        //std::cout << "Roll: " << roll() << " Pitch: " << pitch() << " Throttle: " << throttle() << std::endl; // XXX
 
         // sleep until next update loop 
         gettimeofday(et,NULL);
