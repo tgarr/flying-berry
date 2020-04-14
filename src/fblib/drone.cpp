@@ -44,7 +44,7 @@ bool Drone::setup(){
     return true;
 }
 
-void Drone::run(){
+void Drone::main(){
     float dt,pidv[3] = {0,0,0}; 
     struct timeval *st = new struct timeval;
     struct timeval *et = new struct timeval;
@@ -62,7 +62,8 @@ void Drone::run(){
         Angle* angles = imu->attitude();
 
         // update PID
-        for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) * PID_SCALE;
+        //for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) * PID_SCALE;
+        for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) / fbconfig.looprate;
 
         // actuate on motors
         update_motors(pidv);
@@ -139,7 +140,7 @@ void Drone::panic(){
     set_mode(FlightMode::stabilize);
 }
 
-void Drone::takeoff(){ // TODO increase throttle until drone is lifted from the groud
+void Drone::start(){
     if(flying) return;
     for(int i=0;i<3;i++){
         pid[static_cast<int>(mode)][i]->reset();
@@ -147,7 +148,7 @@ void Drone::takeoff(){ // TODO increase throttle until drone is lifted from the 
     }
     flying = true;
     throttle(fbconfig.min_base_throttle);
-    std::cout << "Taking-off!!" << std::endl;
+    std::cout << "Starting!" << std::endl;
 }
 
 void Drone::roll(float r){
@@ -189,7 +190,7 @@ void Drone::set_setpoints(float r,float p,float y,float t){
     throttle(t);
 }
 
-void Drone::stop(){ // TODO how to stop? land first?
+void Drone::stop(){
     flying = false;
     end = true;
 }

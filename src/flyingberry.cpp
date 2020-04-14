@@ -13,7 +13,7 @@ int main() {
         return 0;
     }
 
-    drone.run();
+    drone.main();
     drone.finalize();
     return 0;
 }

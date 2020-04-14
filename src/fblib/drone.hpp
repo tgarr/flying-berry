@@ -12,8 +12,6 @@
 #include "motor.hpp"
 #include "pid.hpp"
 
-#define PID_SCALE 0.01
-
 // cross-reference
 class Controller;
 
@@ -34,16 +32,14 @@ public:
     ~Drone();
 
     bool setup();
-    void run();
+    void main();
     void finalize();
+    void start();
     void stop();
 
     void panic();
     void set_mode(FlightMode);
-
     bool is_flying(){ return flying; }
-    void set_flying(bool f){ flying = f; }
-    void takeoff();
     
     float* get_setpoints(){ return setpoints; }
     void set_setpoints(float,float,float,float);

@@ -24,8 +24,13 @@ void PID::reset(){
 }
 
 float PID::update(float current,float setpoint,float dt){
-    // PID terms
     float error = setpoint - current;
+
+    // anti-windup
+    if((previous_error < 0) && (error >= 0)) integral = 0;
+    if((previous_error > 0) && (error <= 0)) integral = 0;
+    
+    // PID terms
     integral = integral + (error * dt);
     float derivative = (error - previous_error) / dt;
 

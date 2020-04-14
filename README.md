@@ -11,7 +11,6 @@ Some current and future features of the Flying Berry:
 - Sensor fusion with a complementary filter
 - Configuration file for easy tuning (instead of hard coded parameters)
 - Stabilize and rate flight modes
-- Automated maneuvers, such as take-off and landing
 - Controlled by a Steam Controller
 - FPV through an Android application
 

@@ -17,7 +17,7 @@ void SteamControllerHandler::connect(){
         SteamControllerDevice* dev = SteamController_Open(sc_enum);
         if(dev){
             if(SteamController_ReadEvent(dev,&event) == STEAMCONTROLLER_EVENT_CONNECTION && event.connection.details == STEAMCONTROLLER_CONNECTION_EVENT_CONNECTED){
-                SteamController_Configure(dev, STEAMCONTROLLER_DEFAULT_FLAGS);
+                SteamController_Configure(dev, STEAMCONTROLLER_DEFAULT_FLAGS|STEAMCONTROLLER_DEFAULT_TIMEOUT);
                 sc_device = dev;
                 connected = true;
                 time_disconnected = 0;
@@ -41,9 +41,9 @@ void SteamControllerHandler::disconnect(){
 void SteamControllerHandler::input_event(float dt){
     // buttons
     if(event.update.buttons != 0){
-        // take-off
+        // start
         if(event.update.buttons & STEAMCONTROLLER_BUTTON_NEXT){
-            drone->takeoff();
+            drone->start();
         }
 
         // throttle rear triggers
@@ -61,9 +61,9 @@ void SteamControllerHandler::input_event(float dt){
             drone->panic();
         }
 
-        // off
+        // stop
         if(event.update.buttons & STEAMCONTROLLER_BUTTON_PREV){
-            drone->stop(); // TODO land
+            drone->stop();
         }
     }
 
