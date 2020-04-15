@@ -62,8 +62,7 @@ void Drone::main(){
         Angle* angles = imu->attitude();
 
         // update PID
-        //for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) * PID_SCALE;
-        for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) / fbconfig.looprate;
+        for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) * fbconfig.pid_multiplier;
 
         // actuate on motors
         update_motors(pidv);
@@ -92,6 +91,8 @@ void Drone::update_motors(float *pidv){
     if(!flying) return;
 
     pidv[YAW] = 0; // XXX ignore YAW on first tests
+
+    //std::cout << "PID roll: " << pidv[ROLL] << " | PID pitch: " << pidv[PITCH] << " | Throttle: " << setpoints[THROTTLE] << std::endl; // XXX
 
     // front left
     float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] + pidv[YAW];

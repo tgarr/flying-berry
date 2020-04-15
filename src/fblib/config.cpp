@@ -54,6 +54,7 @@ FBConfig::FBConfig(){
     parse_float_values(iniparser_getstring(ini,"PID:yaw_pid",NULL),pid[static_cast<int>(FlightMode::rate)][YAW],3);
     integral_limit = iniparser_getint(ini,"PID:integral_limit",-1);
     pid_limit = iniparser_getint(ini,"PID:pid_limit",-1);
+    pid_multiplier = iniparser_getdouble(ini,"PID:pid_multiplier",-1);
 
     // Controller
     disconnected_time_limit = iniparser_getint(ini,"Controller:disconnected_time_limit",-1);

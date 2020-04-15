@@ -38,6 +38,7 @@ public:
     // PID
     float pid[2][3][3];
     int integral_limit,pid_limit;
+    float pid_multiplier;
 
     // Controller
     ControllerMode default_controller;
