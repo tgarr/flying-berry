@@ -60,6 +60,7 @@ void Drone::main(){
         // update attitude
         imu->update(dt);
         Angle* angles = imu->attitude();
+        //std::cout << "Roll: " << angles[ROLL] << " | Pitch: " << angles[PITCH] << " | Yaw: " << angles[YAW] << std::endl; // XXX
 
         // update PID
         for(int i=0;i<3;i++) pidv[i] = pid[static_cast<int>(mode)][i]->update(angles[i],setpoints[i],dt) * fbconfig.pid_multiplier;
