@@ -97,22 +97,22 @@ void Drone::update_motors(float *pidv){
 
     // front left
     float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] + pidv[YAW];
-    if(fl < fbconfig.min_base_throttle) fl = fbconfig.min_base_throttle;
+    //if(fl < fbconfig.min_base_throttle) fl = fbconfig.min_base_throttle;
 
     // front right
     float fr = setpoints[THROTTLE] - pidv[ROLL] + pidv[PITCH] - pidv[YAW];
-    if(fr < fbconfig.min_base_throttle) fr = fbconfig.min_base_throttle;
+    //if(fr < fbconfig.min_base_throttle) fr = fbconfig.min_base_throttle;
 
     // back left
     float bl = setpoints[THROTTLE] + pidv[ROLL] - pidv[PITCH] - pidv[YAW];
-    if(bl < fbconfig.min_base_throttle) bl = fbconfig.min_base_throttle;
+    //if(bl < fbconfig.min_base_throttle) bl = fbconfig.min_base_throttle;
 
     // back right
     float br = setpoints[THROTTLE] - pidv[ROLL] - pidv[PITCH] + pidv[YAW];
-    if(br < fbconfig.min_base_throttle) br = fbconfig.min_base_throttle;
+    //if(br < fbconfig.min_base_throttle) br = fbconfig.min_base_throttle;
 
-    motor[static_cast<int>(MotorPosition::front_left)]->throttle(fl);
     motor[static_cast<int>(MotorPosition::back_right)]->throttle(br);
+    motor[static_cast<int>(MotorPosition::front_left)]->throttle(fl);
     motor[static_cast<int>(MotorPosition::front_right)]->throttle(fr);
     motor[static_cast<int>(MotorPosition::back_left)]->throttle(bl);
 }
