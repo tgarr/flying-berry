@@ -13,6 +13,10 @@ Drone::~Drone(){
 
 bool Drone::setup(){
     if(gpioInitialise() == PI_INIT_FAILED) return false;
+    
+    // initialise IMU
+    imu = new IMU;
+    if(!imu->ok) return false;
 
     // initialise motors
     motor[static_cast<int>(MotorPosition::front_left)] = new Motor(MotorPosition::front_left);
@@ -29,9 +33,7 @@ bool Drone::setup(){
     all_motors_on(motor);
     std::cout << "done" << std::endl; // XXX
 
-    // initialise IMU
-    imu = new IMU;
-    if(!imu->ok) return false;
+    // calibrate IMU
     std::cout << "Calibrating IMU ... " << std::flush; // XXX
     imu->calibrate();
     std::cout << "done" << std::endl; // XXX
@@ -140,6 +142,11 @@ void Drone::set_mode(FlightMode m){
 
 void Drone::panic(){
     set_mode(FlightMode::stabilize);
+    // TODO hover
+}
+
+void Drone::descend(){
+    // TODO
 }
 
 void Drone::start(){

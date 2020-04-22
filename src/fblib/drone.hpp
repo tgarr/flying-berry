@@ -38,6 +38,7 @@ public:
     void stop();
 
     void panic();
+    void descend();
     void set_mode(FlightMode);
     bool is_flying(){ return flying; }
     

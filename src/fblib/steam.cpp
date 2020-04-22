@@ -36,6 +36,7 @@ void SteamControllerHandler::connect(){
 void SteamControllerHandler::disconnect(){
     SteamController_Close(sc_device);
     connected = false;
+    last_attempt = 0;
 }
 
 void SteamControllerHandler::input_event(float dt){
@@ -118,12 +119,21 @@ void SteamControllerHandler::connection_event(float dt){
 void SteamControllerHandler::update(float dt){
     if(!connected){
         time_disconnected += dt;
+        last_attempt += dt;
+
         if(time_disconnected >= fbconfig.disconnected_time_limit){
-            float t = dt * fbconfig.throttle_sensitivity;
-            drone->throttle(drone->throttle() - t);
+            if(last_attempt >= 1){ // XXX once per second
+                drone->throttle(drone->throttle() * 0.97);
+            }
+
+            // TODO drone->descend();
         }
 
-        connect();
+        // try to reconnect only once per second
+        if(last_attempt >= 1){
+            connect();
+            last_attempt = 0;
+        }
         return;
     }
 

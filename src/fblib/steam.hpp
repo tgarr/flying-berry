@@ -15,6 +15,7 @@ class SteamControllerHandler: public Controller {
     SteamControllerEvent event;
     bool connected = false;
     float time_disconnected = 0;
+    float last_attempt = 0;
 
     void connect();
     void disconnect();
