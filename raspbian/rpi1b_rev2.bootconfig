@@ -39,21 +39,7 @@
 # uncomment for composite PAL
 #sdtv_mode=2
 
-#uncomment to overclock the arm. 700 MHz is the default.
-arm_freq=1000
-sdram_freq=500
-core_freq=500
-over_voltage=6
-temp_limit=75
-boot_delay=0
-disable_splash=1
-gpu_mem=128
-#force_turbo=1
-#initial_turbo=60
-#over_voltage_sdram=4
-
 # Uncomment some or all of these to enable the optional hardware interfaces
-dtparam=i2c_arm=on,i2c_arm_baudrate=1200000
 #dtparam=i2s=on
 dtparam=spi=on
 
@@ -63,8 +49,25 @@ dtparam=spi=on
 
 # Additional overlays and parameters are documented /boot/overlays/README
 
-# Enable audio (loads snd_bcm2835)
+# flying berry
+gpio=8=op
+gpio=24=op
+gpio=4=op
+gpio=18=op
 dtparam=audio=off
+dtparam=i2c_arm=on,i2c_arm_baudrate=1200000
+#arm_freq=1000
+arm_freq=700
+#sdram_freq=500
+#core_freq=500
+#over_voltage=6
+temp_limit=75
+boot_delay=0
+disable_splash=1
+gpu_mem=128
+#force_turbo=1
+#initial_turbo=60
+#over_voltage_sdram=4
 
 [pi4]
 # Enable DRM VC4 V3D driver on top of the dispmanx display stack
@@ -75,3 +78,4 @@ max_framebuffers=2
 #dtoverlay=vc4-fkms-v3d
 start_x=0
 enable_uart=0
+
