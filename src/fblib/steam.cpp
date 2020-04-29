@@ -69,11 +69,11 @@ void SteamControllerHandler::input_event(float dt){
 
         // burst
         if(event.update.buttons & STEAMCONTROLLER_BUTTON_Y){
-            float t = 2 * dt * fbconfig.throttle_sensitivity;
+            float t = 3 * dt * fbconfig.throttle_sensitivity;
             drone->throttle(drone->throttle() + t);
         }
         else if(event.update.buttons & STEAMCONTROLLER_BUTTON_A){
-            float t = 2 * dt * fbconfig.throttle_sensitivity;
+            float t = 3 * dt * fbconfig.throttle_sensitivity;
             drone->throttle(drone->throttle() - t);
         }
     }
