@@ -26,14 +26,17 @@ cross-compile:
 
 compile: flyingberry calibrate_esc test_motor
 
-flyingberry: flyingberry.cpp drone.o config.o steam.o imu.o motor.o pid.o steamcontroller.a
-	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o flyingberry flyingberry.cpp drone.o config.o steam.o imu.o motor.o pid.o steamcontroller.a
+flyingberry: flyingberry.cpp drone.o config.o steam.o imu.o motor.o pid.o common.o steamcontroller.a
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o flyingberry flyingberry.cpp drone.o config.o steam.o imu.o motor.o pid.o common.o steamcontroller.a
 
-calibrate_esc: calibrate_esc.cpp motor.o config.o
-	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o calibrate_esc calibrate_esc.cpp config.o motor.o
+calibrate_esc: calibrate_esc.cpp motor.o config.o common.o
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o calibrate_esc calibrate_esc.cpp config.o motor.o common.o
 
-test_motor: test_motor.cpp motor.o config.o
-	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o test_motor test_motor.cpp config.o motor.o
+test_motor: test_motor.cpp motor.o config.o common.o
+	$(CC) $(CPPFLAGS) $(LINKFLAGS) -o test_motor test_motor.cpp config.o motor.o common.o
+
+common.o: $(LIBPATH)/common.hpp $(LIBPATH)/common.cpp
+	$(CC) $(CPPFLAGS) -c -o common.o $(LIBPATH)/common.cpp
 
 drone.o: $(LIBPATH)/drone.hpp $(LIBPATH)/drone.cpp $(LIBPATH)/config.hpp $(LIBPATH)/imu.hpp $(LIBPATH)/common.hpp $(LIBPATH)/controller.hpp $(LIBPATH)/motor.hpp $(LIBPATH)/pid.hpp
 	$(CC) $(CPPFLAGS) -c -o drone.o $(LIBPATH)/drone.cpp

@@ -1,7 +1,6 @@
 
 #include <iostream>
 #include <string>
-#include <pigpio.h>
 #include <unistd.h>
 #include "fblib/motor.hpp"
 
@@ -25,7 +24,7 @@ int main(int argc,char **argv) {
     else
         pin = std::stoi(argv[1]);
 
-    if(gpioInitialise() == PI_INIT_FAILED){
+    if(!fblib_initialise()){
         std::cerr << "Something went wrong! Try running as root." << std::endl;
         return 0;
     }
@@ -71,7 +70,7 @@ int main(int argc,char **argv) {
     }
 
     sleep(2);
-    gpioTerminate();
+    fblib_finalize();
 
     return 0;
 }

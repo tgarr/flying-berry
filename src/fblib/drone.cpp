@@ -12,7 +12,7 @@ Drone::~Drone(){
 }
 
 bool Drone::setup(){
-    if(gpioInitialise() == PI_INIT_FAILED) return false;
+    if(!fblib_initialise()) return false;
     
     // initialise IMU
     imu = new IMU;
@@ -129,7 +129,7 @@ void Drone::finalize(){
         for(int j=0;j<3;j++)
             delete pid[i][j];
     
-    gpioTerminate();
+    fblib_finalize();
 }
 
 void Drone::set_mode(FlightMode m){

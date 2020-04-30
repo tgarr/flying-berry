@@ -2,7 +2,10 @@
 #ifndef _FBCOMMON_HPP_
 #define _FBCOMMON_HPP_
 
+#include <pigpio.h>
 #include <iostream> // XXX remove
+
+#define FB_MAX_LOOPRATE 1000
 
 // indexation
 #define X 0 
@@ -19,6 +22,9 @@ enum class PIDTerm { KP = 0, KI = 1, KD = 2 };
 enum class ControllerMode { steam = 0, network = 1 };
 
 typedef float Angle;
+
+bool fblib_initialise();
+void fblib_finalize();
 
 #endif
 

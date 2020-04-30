@@ -2,7 +2,6 @@
 #ifndef _FBDRONE_HPP_
 #define _FBDRONE_HPP_
 
-#include <pigpio.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include "common.hpp"

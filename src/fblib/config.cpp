@@ -19,6 +19,8 @@ FBConfig::FBConfig(){
 
     // Flight
     looprate = iniparser_getint(ini,"Flight:looprate",-1);
+    if(looprate > FB_MAX_LOOPRATE) looprate = FB_MAX_LOOPRATE;
+
     stab_max_roll = iniparser_getint(ini,"Flight:stab_max_roll",-1);
     stab_max_pitch = iniparser_getint(ini,"Flight:stab_max_pitch",-1);
     min_base_throttle = iniparser_getint(ini,"Flight:min_base_throttle",-1) / 100.0f;
