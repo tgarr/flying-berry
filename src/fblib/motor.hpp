@@ -5,6 +5,11 @@
 #include <pigpio.h>
 #include "config.hpp"
 
+#define PWM_RANGE 2500
+#define PWM_FREQUENCY 400
+#define PWM_MIN 1000
+#define PWM_MAX 2000
+
 class Motor {
     int pin,range,cur,max_pulse,max_pulse_increase;
     bool calibrating = false;

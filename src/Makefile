@@ -9,7 +9,7 @@ BUILDROOT=buildfs
 BUILDPATH=/home/pi/flyingberry-build
 BUILDUSER=pi
 
-RPIADDR=192.168.100.5
+RPIADDR=192.168.100.2
 RPIUSER=pi
 RPIPATH=/home/pi/flyingberry
 

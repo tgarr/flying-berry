@@ -34,8 +34,6 @@ FBConfig::FBConfig(){
 
     // Motor
     parse_int_values(iniparser_getstring(ini,"Motor:esc_pins",NULL),esc_pin,4);
-    esc_min_value = iniparser_getint(ini,"Motor:esc_min_value",-1);
-    esc_max_value = iniparser_getint(ini,"Motor:esc_max_value",-1);
     max_throttle = iniparser_getint(ini,"Motor:max_throttle",-1) / 100.0f;
     max_throttle_increase = iniparser_getint(ini,"Motor:max_throttle_increase",-1) / 100.0f;
     delay_on = iniparser_getint(ini,"Motor:delay_on",-1);

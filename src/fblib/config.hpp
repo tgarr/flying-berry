@@ -26,7 +26,6 @@ public:
 
     // Motor
     int esc_pin[4];
-    int esc_min_value,esc_max_value;
     float max_throttle,max_throttle_increase;
     int delay_on;
 
