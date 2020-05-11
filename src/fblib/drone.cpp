@@ -89,29 +89,16 @@ void Drone::main(){
     delete et;
 }
 
-// update motors throttle, ensuring they do not stop spinning while flying
+// update motors throttle
 void Drone::update_motors(float *pidv){
     if(!flying) return;
 
-    pidv[YAW] = 0; // XXX ignore YAW on first tests
-
     //std::cout << "PID roll: " << pidv[ROLL] << " | PID pitch: " << pidv[PITCH] << " | Throttle: " << setpoints[THROTTLE] << std::endl; // XXX
 
-    // front left
-    float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] + pidv[YAW];
-    //if(fl < fbconfig.min_base_throttle) fl = fbconfig.min_base_throttle;
-
-    // front right
-    float fr = setpoints[THROTTLE] - pidv[ROLL] + pidv[PITCH] - pidv[YAW];
-    //if(fr < fbconfig.min_base_throttle) fr = fbconfig.min_base_throttle;
-
-    // back left
-    float bl = setpoints[THROTTLE] + pidv[ROLL] - pidv[PITCH] - pidv[YAW];
-    //if(bl < fbconfig.min_base_throttle) bl = fbconfig.min_base_throttle;
-
-    // back right
-    float br = setpoints[THROTTLE] - pidv[ROLL] - pidv[PITCH] + pidv[YAW];
-    //if(br < fbconfig.min_base_throttle) br = fbconfig.min_base_throttle;
+    float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] + pidv[YAW]; // front left
+    float fr = setpoints[THROTTLE] - pidv[ROLL] + pidv[PITCH] - pidv[YAW]; // front right
+    float bl = setpoints[THROTTLE] + pidv[ROLL] - pidv[PITCH] - pidv[YAW]; // back left
+    float br = setpoints[THROTTLE] - pidv[ROLL] - pidv[PITCH] + pidv[YAW]; // back right
 
     motor[static_cast<int>(MotorPosition::back_right)]->throttle(br);
     motor[static_cast<int>(MotorPosition::front_left)]->throttle(fl);
@@ -142,7 +129,6 @@ void Drone::set_mode(FlightMode m){
 
 void Drone::panic(){
     set_mode(FlightMode::stabilize);
-    // TODO hover
 }
 
 void Drone::descend(){
