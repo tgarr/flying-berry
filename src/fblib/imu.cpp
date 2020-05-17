@@ -42,6 +42,14 @@ IMU::~IMU(){
     delete accel_angles;
 }
 
+void IMU::reset(){
+    for(int i=0;i<3;i++){
+        comp_angles[i] = 0;
+        gyro_angles[i] = 0;
+        accel_angles[i] = 0;
+    }
+}
+
 float IMU::temperature(){
     SensorDataType temp1 = i2cReadByteData(handle,MPU6050_TEMP1);
     SensorDataType temp2 = i2cReadByteData(handle,MPU6050_TEMP2);
@@ -106,7 +114,7 @@ void IMU::complementary_filter(float dt){
     gyro_angles[PITCH] += gy * dt;
     gyro_angles[YAW] += gz * dt;
     if(gyro_angles[YAW] > 180) gyro_angles[YAW] -= 360;
-    if(gyro_angles[YAW] < -180) gyro_angles[YAW] += 360;
+    else if(gyro_angles[YAW] < -180) gyro_angles[YAW] += 360;
 
     accel_angles[ROLL] = atan2(ay, az) * RAD_TO_DEGREE;
     accel_angles[PITCH] = atan2(ax, az) * RAD_TO_DEGREE;

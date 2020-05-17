@@ -26,7 +26,7 @@ public:
 
     // Motor
     int esc_pin[4];
-    float max_throttle,max_throttle_increase;
+    float min_throttle,max_throttle,max_throttle_increase;
     int delay_on;
 
     // IMU

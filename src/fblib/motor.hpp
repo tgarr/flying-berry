@@ -11,7 +11,7 @@
 #define PWM_MAX 2000
 
 class Motor {
-    int pin,range,cur,max_pulse,max_pulse_increase;
+    int pin,range,cur,min_pulse,max_pulse,max_pulse_increase;
     bool calibrating = false;
 
     void setup(int);

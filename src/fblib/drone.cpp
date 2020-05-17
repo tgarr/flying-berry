@@ -83,6 +83,7 @@ void Drone::main(){
         // compute looptime
         gettimeofday(et,NULL);
         looptime = ((et->tv_sec - st->tv_sec)*1000000) + (et->tv_usec - st->tv_usec);
+        //std::cout << looptime << " " << elapsed << std::endl; // XXX
     }
     
     delete st;
@@ -95,10 +96,10 @@ void Drone::update_motors(float *pidv){
 
     //std::cout << "PID roll: " << pidv[ROLL] << " | PID pitch: " << pidv[PITCH] << " | Throttle: " << setpoints[THROTTLE] << std::endl; // XXX
 
-    float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] + pidv[YAW]; // front left
-    float fr = setpoints[THROTTLE] - pidv[ROLL] + pidv[PITCH] - pidv[YAW]; // front right
-    float bl = setpoints[THROTTLE] + pidv[ROLL] - pidv[PITCH] - pidv[YAW]; // back left
-    float br = setpoints[THROTTLE] - pidv[ROLL] - pidv[PITCH] + pidv[YAW]; // back right
+    float fl = setpoints[THROTTLE] + pidv[ROLL] + pidv[PITCH] - pidv[YAW]; // front left
+    float fr = setpoints[THROTTLE] - pidv[ROLL] + pidv[PITCH] + pidv[YAW]; // front right
+    float bl = setpoints[THROTTLE] + pidv[ROLL] - pidv[PITCH] + pidv[YAW]; // back left
+    float br = setpoints[THROTTLE] - pidv[ROLL] - pidv[PITCH] - pidv[YAW]; // back right
 
     motor[static_cast<int>(MotorPosition::back_right)]->throttle(br);
     motor[static_cast<int>(MotorPosition::front_left)]->throttle(fl);
@@ -141,6 +142,7 @@ void Drone::start(){
         pid[static_cast<int>(mode)][i]->reset();
         setpoints[i] = 0;
     }
+    imu->reset();
     flying = true;
     throttle(fbconfig.min_base_throttle);
     std::cout << "Starting!" << std::endl;

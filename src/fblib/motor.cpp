@@ -18,6 +18,7 @@ void Motor::setup(int p){
     pin = p;
     range = PWM_MAX - PWM_MIN;
     cur = 0;
+    min_pulse = PWM_MIN + (range * fbconfig.min_throttle);
     max_pulse = PWM_MIN + (range * fbconfig.max_throttle);
     max_pulse_increase = range * fbconfig.max_throttle_increase;
 
@@ -40,6 +41,7 @@ int Motor::protection(int p){
     if(p < PWM_MIN) p = PWM_MIN;
     if(p > PWM_MAX) p = PWM_MAX;
     if((p-cur) > max_pulse_increase) p = cur + max_pulse_increase;
+    if(p < min_pulse) p = min_pulse;
     if(p > max_pulse) p = max_pulse;
     return p;
 }

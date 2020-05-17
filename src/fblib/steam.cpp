@@ -82,8 +82,8 @@ void SteamControllerHandler::input_event(float dt){
     // TODO rate mode
     float roll,pitch;
     if((event.update.rightXY.x == 0) || (event.update.rightXY.y == 0)){
-        roll = event.update.rightXY.x / (float)STEAMCONTROLLER_RIGHTPAD_RADIUS * 100 * fbconfig.roll_sensitivity;
-        pitch = -1*event.update.rightXY.y / (float)STEAMCONTROLLER_RIGHTPAD_RADIUS * 100 * fbconfig.pitch_sensitivity;
+        roll = 1 * event.update.rightXY.x / (float)STEAMCONTROLLER_RIGHTPAD_RADIUS * 100 * fbconfig.roll_sensitivity;
+        pitch = -1 * event.update.rightXY.y / (float)STEAMCONTROLLER_RIGHTPAD_RADIUS * 100 * fbconfig.pitch_sensitivity;
     }
     else {
         float x = event.update.rightXY.x;
@@ -92,7 +92,7 @@ void SteamControllerHandler::input_event(float dt){
         float c = sqrt(x*x + y*y);
         float crate = c / STEAMCONTROLLER_RIGHTPAD_RADIUS;
 
-        roll = copysign(crate * ((M_PI/2-d)/(M_PI/2)),x) * 100 * fbconfig.roll_sensitivity;
+        roll = 1 * copysign(crate * ((M_PI/2-d)/(M_PI/2)),x) * 100 * fbconfig.roll_sensitivity;
         pitch = -1 * copysign(crate * (d/(M_PI/2)),y) * 100 * fbconfig.pitch_sensitivity;
     }
 
@@ -124,16 +124,14 @@ void SteamControllerHandler::update(float dt){
         if(time_disconnected >= fbconfig.disconnected_time_limit){
             if(last_attempt >= 1){ // XXX once per second
                 drone->throttle(drone->throttle() * 0.97);
+                last_attempt = 0;
             }
 
             // TODO drone->descend();
         }
 
-        // try to reconnect only once per second
-        if(last_attempt >= 1){
-            connect();
-            last_attempt = 0;
-        }
+        // try to connect only if not flying
+        if(!drone->is_flying()) connect();
         return;
     }
 

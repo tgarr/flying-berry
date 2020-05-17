@@ -91,6 +91,7 @@ public:
     Angle* attitude();
     Angle* gyro();
     Angle* accel();
+    void reset();
 };
 
 #endif
