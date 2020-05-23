@@ -44,7 +44,7 @@ public:
     int disconnected_time_limit;
 
     // Steam Controller
-    float roll_sensitivity,pitch_sensitivity,yaw_sensitivity,throttle_sensitivity;
+    float roll_sensitivity,pitch_sensitivity,yaw_sensitivity,throttle_sensitivity,takeoff_throttle;
     
     // FPV
     int fpv_tcp_port,fpv_udp_port;

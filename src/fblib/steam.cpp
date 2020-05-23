@@ -67,13 +67,14 @@ void SteamControllerHandler::input_event(float dt){
             drone->stop();
         }
 
-        // burst
+        // take-off
         if(event.update.buttons & STEAMCONTROLLER_BUTTON_Y){
-            float t = 3 * dt * fbconfig.throttle_sensitivity;
-            drone->throttle(drone->throttle() + t);
+            drone->throttle(fbconfig.takeoff_throttle);
         }
-        else if(event.update.buttons & STEAMCONTROLLER_BUTTON_A){
-            float t = 3 * dt * fbconfig.throttle_sensitivity;
+        
+        // throttle burst down
+        if(event.update.buttons & STEAMCONTROLLER_BUTTON_A){
+            float t = 5 * dt * fbconfig.throttle_sensitivity;
             drone->throttle(drone->throttle() - t);
         }
     }

@@ -70,6 +70,7 @@ FBConfig::FBConfig(){
     pitch_sensitivity = iniparser_getint(ini,"Steam_Controller:pitch_sensitivity",-1) / 100.0f;
     yaw_sensitivity = iniparser_getint(ini,"Steam_Controller:yaw_sensitivity",-1) / 100.0f;
     throttle_sensitivity = iniparser_getint(ini,"Steam_Controller:throttle_sensitivity",-1) / 100.0f;
+    takeoff_throttle = iniparser_getint(ini,"Steam_Controller:takeoff_throttle",-1) / 100.0f;
     
     // FPV
     fpv_tcp_port = iniparser_getint(ini,"FPV:tcp_port",-1);
